@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Feedback - Cinema XXI</title>
+  <title>Cinema XXI</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
@@ -12,17 +12,23 @@
 </head>
 <body>
 
-  <iframe id="gasFrame" allow="camera" loading="lazy"></iframe>
+  <iframe id="gasFrame" allow="camera; fullscreen" loading="lazy"></iframe>
 
   <script>
-    // URL Web App Google Apps Script Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwhlEJW5kIZB30iQTfcuYAUMLsnSGpbfgu5_wOHFYY2hfL98OmIPb_7PLU4lIoOzX4q_Q/exec";
+    const params = new URLSearchParams(window.location.search);
 
-    // Meneruskan parameter kode outlet (?o=...)
-    const searchParams = window.location.search;
-    document.getElementById("gasFrame").src = GAS_URL + searchParams;
+    if (params.has("o")) {
+      // Jika ada kode outlet (?o=...) -> Customer Form
+      document.title = "Customer Feedback - Cinema XXI";
+      document.getElementById("gasFrame").src = GAS_URL + "?o=" + params.get("o");
+    } else {
+      // Jika admin (?dashboard, ?admin, atau tanpa parameter) -> Dashboard Login
+      document.title = "Dashboard Cinema XXI";
+      document.getElementById("gasFrame").src = GAS_URL;
+    }
 
-    // Dengarkan pesan dari form untuk mengubah judul tab browser
+    // Ubah nama tab secara dinamis jika ada kiriman pesan dari Apps Script
     window.addEventListener("message", function (event) {
       if (event.data && event.data.type === "SET_TITLE" && event.data.title) {
         document.title = event.data.title;
