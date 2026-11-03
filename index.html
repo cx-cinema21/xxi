@@ -18,10 +18,16 @@
     // URL Web App Google Apps Script Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwHNEWKfIiGAhcecXnvMmnngCOi3CR5Pt8NDJ3eCn6OWAqLhupkqZ73RUXSk1j-ODEO/exec";
 
-    // Meneruskan kode outlet (?o=...) secara otomatis
+    // Meneruskan parameter kode outlet (?o=...)
     const searchParams = window.location.search;
-
     document.getElementById("gasFrame").src = GAS_URL + searchParams;
+
+    // Dengarkan pesan dari form untuk mengubah judul tab browser
+    window.addEventListener("message", function (event) {
+      if (event.data && event.data.type === "SET_TITLE" && event.data.title) {
+        document.title = event.data.title;
+      }
+    });
   </script>
 
 </body>
