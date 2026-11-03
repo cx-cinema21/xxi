@@ -28,7 +28,7 @@
     } else {
       // Jika Admin Dashboard / Login / Shift / Peta, dll
       const initialRoute = cleanPath || (urlParams.get("route") || "dashboard");
-      document.title = initialRoute === "login" ? "Masuk Dashboard - Cinema XXI" : "Dashboard Cinema XXI";
+      document.title = initialRoute === "login" ? "Customer Experience | XXI" : "Dashboard CX | XXI";
       document.getElementById("gasFrame").src = GAS_URL + "?route=" + encodeURIComponent(initialRoute);
     }
 
