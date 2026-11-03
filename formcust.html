@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Feedback - Cinema XXI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+
+  <iframe id="gasFrame" allow="camera" loading="lazy"></iframe>
+
+  <script>
+    // URL Web App Google Apps Script Anda
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwHNEWKfIiGAhcecXnvMmnngCOi3CR5Pt8NDJ3eCn6OWAqLhupkqZ73RUXSk1j-ODEO/exec";
+
+    // Meneruskan kode outlet (?o=...) secara otomatis
+    const searchParams = window.location.search;
+
+    document.getElementById("gasFrame").src = GAS_URL + searchParams;
+  </script>
+
+</body>
+</html>
