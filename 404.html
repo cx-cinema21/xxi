@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema XXI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+
+  <iframe id="gasFrame" allow="camera; fullscreen" loading="lazy"></iframe>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwhlEJW5kIZB30iQTfcuYAUMLsnSGpbfgu5_wOHFYY2hfL98OmIPb_7PLU4lIoOzX4q_Q/exec";
+
+    // 1. Baca parameter (?o=...) atau path URL (/shift/, /peta/, dll)
+    const urlParams = new URLSearchParams(window.location.search);
+    const cleanPath = window.location.pathname.replace(/^\/xxi\/?/, "").replace(/\/$/, "").trim();
+
+    if (urlParams.has("o")) {
+      // Jika Customer scan barcode
+      document.title = "Customer Feedback - Cinema XXI";
+      document.getElementById("gasFrame").src = GAS_URL + "?o=" + urlParams.get("o");
+    } else {
+      // Jika Admin Dashboard / Login / Shift / Peta, dll
+      const initialRoute = cleanPath || (urlParams.get("route") || "dashboard");
+      document.title = initialRoute === "login" ? "Masuk Dashboard - Cinema XXI" : "Dashboard Cinema XXI";
+      document.getElementById("gasFrame").src = GAS_URL + "?route=" + encodeURIComponent(initialRoute);
+    }
+
+    // 2. Ubah link URL di address bar & judul tab saat admin berpindah menu
+    window.addEventListener("message", function (event) {
+      if (event.data && event.data.type === "ROUTE_CHANGE") {
+        if (event.data.title) document.title = event.data.title;
+        if (event.data.path) {
+          const targetUrl = "/xxi/" + event.data.path + "/";
+          if (window.location.pathname !== targetUrl) {
+            window.history.replaceState(null, "", targetUrl);
+          }
+        }
+      } else if (event.data && event.data.type === "SET_TITLE" && event.data.title) {
+        document.title = event.data.title;
+      }
+    });
+  </script>
+
+</body>
+</html>
