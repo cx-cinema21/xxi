@@ -16,21 +16,33 @@
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwhlEJW5kIZB30iQTfcuYAUMLsnSGpbfgu5_wOHFYY2hfL98OmIPb_7PLU4lIoOzX4q_Q/exec";
-    const params = new URLSearchParams(window.location.search);
 
-    if (params.has("o")) {
-      // Jika ada kode outlet (?o=...) -> Customer Form
+    // 1. Baca parameter (?o=...) atau path URL (/shift/, /peta/, dll)
+    const urlParams = new URLSearchParams(window.location.search);
+    const cleanPath = window.location.pathname.replace(/^\/xxi\/?/, "").replace(/\/$/, "").trim();
+
+    if (urlParams.has("o")) {
+      // Jika Customer scan barcode
       document.title = "Customer Feedback - Cinema XXI";
-      document.getElementById("gasFrame").src = GAS_URL + "?o=" + params.get("o");
+      document.getElementById("gasFrame").src = GAS_URL + "?o=" + urlParams.get("o");
     } else {
-      // Jika admin (?dashboard, ?admin, atau tanpa parameter) -> Dashboard Login
-      document.title = "Dashboard Cinema XXI";
-      document.getElementById("gasFrame").src = GAS_URL;
+      // Jika Admin Dashboard / Login / Shift / Peta, dll
+      const initialRoute = cleanPath || (urlParams.get("route") || "dashboard");
+      document.title = initialRoute === "login" ? "Masuk Dashboard - Cinema XXI" : "Dashboard Cinema XXI";
+      document.getElementById("gasFrame").src = GAS_URL + "?route=" + encodeURIComponent(initialRoute);
     }
 
-    // Ubah nama tab secara dinamis jika ada kiriman pesan dari Apps Script
+    // 2. Ubah link URL di address bar & judul tab saat admin berpindah menu
     window.addEventListener("message", function (event) {
-      if (event.data && event.data.type === "SET_TITLE" && event.data.title) {
+      if (event.data && event.data.type === "ROUTE_CHANGE") {
+        if (event.data.title) document.title = event.data.title;
+        if (event.data.path) {
+          const targetUrl = "/xxi/" + event.data.path + "/";
+          if (window.location.pathname !== targetUrl) {
+            window.history.replaceState(null, "", targetUrl);
+          }
+        }
+      } else if (event.data && event.data.type === "SET_TITLE" && event.data.title) {
         document.title = event.data.title;
       }
     });
